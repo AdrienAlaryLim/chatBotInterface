@@ -15,11 +15,16 @@ try {
             insertReponse();
         }elseif ($_GET['action'] == 'creerReponse') {
             creerReponse();
+        }elseif ($_GET['action'] == 'creerMotCle') {
+            creerMotCle();
         }elseif ($_GET['action'] == 'modifierReponse') {
             modifierReponse();
         }elseif ($_GET['action'] == 'modifierCouple') {
             modifierCouple();
+        }elseif ($_GET['action'] == 'listQuestionsWithoutMotCle') {
+            getListQuestionsWithoutMotCle();
         }
+
     }
     else {
         getListQuestionsUnanswered();

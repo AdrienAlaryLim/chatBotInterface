@@ -28,4 +28,11 @@ class Questions extends Manager
         $req = $db->query('SELECT q.id_question, q.date_question, q.question FROM Questions q LEFT JOIN repondre r ON q.id_question = r.id_question WHERE r.id_question IS NULL');
         return $req;
     }
+
+    public function getQuestionsWithoutMotCle()
+    {
+        $db = $this->dbConnect();
+        $req = $db->query('SELECT q.id_question, q.date_question, q.question FROM Questions q LEFT JOIN contenir c ON q.id_question = c.id_question WHERE c.id_question IS NULL');
+        return $req;
+    }
 }

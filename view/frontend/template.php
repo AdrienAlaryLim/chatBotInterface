@@ -15,9 +15,8 @@ if(!isset($_SESSION)){
     <body>
     	<ul class="navBar">
     		<li class="navBar"> <a class="navBar" href="index.php?action=listQuestionsUnanswered"> Questions non répondues </a> </li>
+            <li class="navBar"> <a class="navBar" href="index.php?action=listQuestionsWithoutMotCle"> Questions sans mots clés </a> </li>
     		<li class="navBar"> <a class="navBar" href="index.php?action=listCoupleQRWeak"> Couple Q/R incertains </a> </li>
-    		<li class="navBar"> <a class="navBar" href="index.php?action=listQuestions"> Liste des questions </a> </li>
-            <li class="navBar"> <a class="navBar" href="index.php?action=listReponses"> Liste des reponses </a> </li>
 		</ul>
 
 		<header class=<?= $styleMenu ?> >

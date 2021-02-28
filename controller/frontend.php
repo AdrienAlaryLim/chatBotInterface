@@ -5,6 +5,8 @@ require_once('model/utilisateur.php');
 require_once('model/questions.php');
 require_once('model/reponses.php');
 require_once('model/repondre.php');
+require_once('model/mots_cles.php');
+require_once('model/contenir.php');
 
 function getAccueil()
 {
@@ -32,6 +34,13 @@ function getListQuestionsUnanswered()
     require('view/frontend/listQuestionsUnanswered.php');
 }
 
+function getListQuestionsWithoutMotCle()
+{
+    $ListQuestions = new \ChatBot\Model\questions();
+    $list = $ListQuestions->getQuestionsWithoutMotCle();
+    require('view/frontend/listQuestionsWithoutMotCle.php');
+}
+
 function getListCoupleQRWeak()
 {
     $ListQuestions = new \ChatBot\Model\repondre();
@@ -47,6 +56,13 @@ function getListReponses()
     require('view/frontend/listReponses.php');
 }
 
+function getMotsClesByMots($mots)
+{
+	$MotsCles = new \ChatBot\Model\mots_cles();
+    $list = $MotsCles->getMotsClesByMots($mots);
+    //require('view/frontend/listReponses.php');
+}
+
 function insertReponse($reponseToSet, $idQuestion){
 	$reponse = new \ChatBot\Model\reponses();
 	$repondre = new \ChatBot\Model\repondre();
@@ -59,6 +75,24 @@ function insertReponse($reponseToSet, $idQuestion){
 	$repondre->insertRepondre($data['id_reponse'], $idQuestion);
 
 	header('Location: index.php?action=listQuestionsUnanswered');
+}
+
+function insertMotCle($motCleToSet, $idQuestion){
+	$motCle = new \ChatBot\Model\mots_cles();
+
+	$motCle->insertMotCle($motCleToSet);
+	associateMotCle($motCleToSet, $idQuestion);
+}
+
+function associateMotCle($motCleToSet, $idQuestion){
+	$motCle = new \ChatBot\Model\mots_cles();
+	$contenir = new \ChatBot\Model\contenir();
+
+	$list = $motCle->getMotCleByMot($motCleToSet);
+	$data = $list->fetch();
+
+	$contenir->insertContenir($data['id_mot_cle'], $idQuestion);
+	header('Location: index.php?action=listQuestionsWithoutMotCle');
 }
 
 function insertReponseUpdateRepondre($reponseToSet, $idQuestion, $initialIdReponse){
@@ -77,13 +111,14 @@ function insertReponseUpdateRepondre($reponseToSet, $idQuestion, $initialIdRepon
 function creerReponse(){
 	$idQuestion = $_GET['idQuestion'];
 	$reponseToSet = isset($_POST['reponse']) ? $_POST['reponse'] : '';
-	$submit=isset($_POST['submit']) ? $_POST['submit'] : '';
+	$submitRecherche=isset($_POST['submitRecherche']) ? $_POST['submitRecherche'] : '';
+	$submitAssignation=isset($_POST['submitAssignation']) ? $_POST['submitAssignation'] : '';
 
     $ListQuestions = new \ChatBot\Model\questions();
     $list = $ListQuestions->getQuestion($idQuestion);
     require('view/frontend/creerReponse.php');
 
-    if ($submit) 
+    if ($submitAssignation)
 	{
 		if($reponseToSet == null || trim($reponseToSet) == "") 
 		{
@@ -92,6 +127,54 @@ function creerReponse(){
 			insertReponse($reponseToSet, $idQuestion);
 		}
 	}
+}
+
+function creerMotCle(){
+	$idQuestion = $_GET['idQuestion'];
+	$searchMotCle = isset($_POST['searchMotCle']) ? $_POST['searchMotCle'] : '';
+	$selectMotCle = isset($_POST['selectMotCle']) ? $_POST['selectMotCle'] : '';
+	$createMotCle = isset($_POST['createMotCle']) ? $_POST['createMotCle'] : '';
+	//$submit = isset($_POST['submit']) ? $_POST['submit'] : '';
+	$submitSearch = isset($_POST['submitSearch']) ? $_POST['submitSearch'] : '';
+	$submitAssociate = isset($_POST['submitAssociate']) ? $_POST['submitAssociate'] : '';
+	$submitCreate = isset($_POST['submitCreate']) ? $_POST['submitCreate'] : '';
+
+    $Questions = new \ChatBot\Model\questions();
+    $question = $Questions->getQuestion($idQuestion);
+    
+    $ListMotsCles = new \ChatBot\Model\mots_cles();
+    $listMotsCles = $ListMotsCles->getMotsClesByMots($searchMotCle);
+
+    //$ListMotsCles = new \ChatBot\Model\mots_cles();
+    //$insertMotCle = $ListMotsCles->getMotsClesByMots($searchMotCle);
+    
+    if ($submitSearch) //$submitSearch
+	{
+		if($searchMotCle == null || trim($searchMotCle) == "") 
+		{
+			echo '<script type="text/javascript"> alert("Entrez une combinaisons de mots clés valide"); </script>';
+		}
+	}
+
+	if ($submitAssociate) 
+	{
+		associateMotCle($selectMotCle, $idQuestion);
+	}
+
+	if ($submitCreate) 
+	{
+		if($createMotCle == null || trim($createMotCle) == "") 
+		{
+			echo '<script type="text/javascript"> alert("La réponse saisie est invalide"); </script>';
+		}else{
+			//TODO véification séparation mot clé
+			insertMotCle($createMotCle, $idQuestion);
+		}
+	}
+
+	require('view/frontend/creerMotCle.php');
+
+	
 }
 
 function modifierReponse(){
@@ -119,7 +202,7 @@ function modifierCouple(){
 	}
 }
 
-function getUtilisateur()
+/*function getUtilisateur()
 {
 	$utilisateurByMail = new \ChatBot\Model\utilisateur();
 	$utilisateur = $utilisateurByMail->getutilisateurByMail($_SESSION['mailUtilisateur']);
@@ -186,4 +269,4 @@ function deconnexionUtilisateur()
 	session_unset();
 	session_destroy();
 	header('Location: index.php');
-}
+}*/
