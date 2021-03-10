@@ -111,14 +111,13 @@ function insertReponseUpdateRepondre($reponseToSet, $idQuestion, $initialIdRepon
 function creerReponse(){
 	$idQuestion = $_GET['idQuestion'];
 	$reponseToSet = isset($_POST['reponse']) ? $_POST['reponse'] : '';
-	$submitRecherche=isset($_POST['submitRecherche']) ? $_POST['submitRecherche'] : '';
-	$submitAssignation=isset($_POST['submitAssignation']) ? $_POST['submitAssignation'] : '';
+	$submit=isset($_POST['submit']) ? $_POST['submit'] : '';
 
     $ListQuestions = new \ChatBot\Model\questions();
     $list = $ListQuestions->getQuestion($idQuestion);
     require('view/frontend/creerReponse.php');
 
-    if ($submitAssignation)
+    if ($submit)
 	{
 		if($reponseToSet == null || trim($reponseToSet) == "") 
 		{
