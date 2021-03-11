@@ -55,4 +55,31 @@ class Reponses extends Manager
         $result = $sth->fetch(PDO::FETCH_NUM); 
         return $result;
     }
+
+    public function getReponsesInWordsLike($words)
+    {
+        $array = explode("/", $words);
+        $count = 1;
+        $stringRequest = "";
+        if($array[0] != null || trim($array[0]) != "")
+        {
+            foreach ($array as $word) {
+                if($count == 1)
+                {
+                    $stringRequest = " WHERE response LIKE '%".$word."%'";
+                    $count++;
+                }
+                else if(sizeof($array) != $count)
+                {
+                    $stringRequest = $stringRequest." OR mot LIKE '%".$word."%'";
+                    $count++;
+                }
+            }
+        }
+
+        $db = $this->dbConnect();
+        $req = $db->query("SELECT * FROM reponses".$stringRequest);
+        $req->execute();
+        return $req;
+    }
 }
