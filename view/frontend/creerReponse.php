@@ -16,28 +16,59 @@ ob_start();
             
         </div>
     
-    <form action="#" method="post" name="formulaire">  
-		<table class="tabLicence">
+	    <form action="#" method="post" name="formulaire">  
+			<table class="tabLicence">
 				<tr>
-					<th class="tabLicence">IdQuestion</th>
 					<th class="tabLicence">Question</th>
-					<th class="tabLicence">Reponse</th>
+					<th class="tabLicence">Moteur de recherche de réponses</th>
 				</tr>
 				
 				<?php 
-				while ($data = $list->fetch())
+				while ($data = $question->fetch())
 				{
 				?>
 				<tr>
-					<td class="tabLicence" style="width: 70px; border-left: 1px solid #ddd; text-align: center;"> <?php echo $data['id_question']; ?></td>
 					<td class="tabLicence" style="width: 40%;"> <?php echo $data['question']; ?></td>
-					<td class="tabLicence" style="width: 40%;"><textarea id="reponse" name="reponse" rows="1"></textarea></td>
-					<td class="tabLicence" style="width: 40px; padding:5px;"> <input type="submit" name="submit" value="Ajouter"></td>
+					<td class="tabLicence" style="width: 40%;">Séparation par un slash "/": <textarea id="searchReponse" name="searchReponse" rows="1"></textarea></td>
+					<td class="tabLicence" style="width: 40px; padding:5px;"> <input type="submit" name="submitSearch" value="Rechercher"></td>
 				</tr>
 				<?php
 				}
-				$list->closeCursor();
+				$question->closeCursor();
 				?>
+			</table>
+
+			<p>Associer une réponse trouvée dans la recherche </p>
+			<table class="tabLicence">
+				<tr>
+					<th class="tabLicence">Associer une réponse</th>
+				</tr>
+				<tr>
+					<td class="tabLicence" style="width: 70%;">	
+						<select name="selectReponse" id="selectReponse">
+						<?php
+							while ($dataReponse = $listReponses->fetch())
+							{
+								echo '<option value="'.$dataReponse['id_reponse'].'">'.$dataReponse['response']."</option>";
+							}
+							$listReponses->closeCursor();
+						?>
+						</select>
+					</td>
+					<td class="tabLicence" style="width: 40px; padding:5px;"> <input type="submit" name="submitAssociate" value="Associer"></td>
+				</tr>
+			</table>
+
+			<p>Créer une nouvelle réponse : </p>
+			<table class="tabLicence">
+				<tr>
+					<th class="tabLicence">Créer réponse</th>
+				</tr>
+				<tr>
+					<td class="tabLicence" style="width: 70%;"><textarea id="createReponse" name="createReponse" rows="1"></textarea></td>
+					<td class="tabLicence" style="width: 40px; padding:5px;"> <input type="submit" name="submitCreate" value="Créer"></td>
+				</tr>
+				
 			</table>
 		</form>
 	</div>

@@ -65,15 +65,18 @@ function getMotsClesByMots($mots)
 
 function insertReponse($reponseToSet, $idQuestion){
 	$reponse = new \ChatBot\Model\reponses();
-	$repondre = new \ChatBot\Model\repondre();
 
 	$reponse->insertReponse($reponseToSet);
+	associateReponse($reponseToSet, $idQuestion);
+}
 
+function associateReponse($reponseToSet, $idQuestion){
+	$reponse = new \ChatBot\Model\reponses();
+	$repondre = new \ChatBot\Model\repondre();
 	$list = $reponse->getReponseByWords($reponseToSet);
 	$data = $list->fetch();
 
 	$repondre->insertRepondre($data['id_reponse'], $idQuestion);
-
 	header('Location: index.php?action=listQuestionsUnanswered');
 }
 
@@ -110,23 +113,43 @@ function insertReponseUpdateRepondre($reponseToSet, $idQuestion, $initialIdRepon
 
 function creerReponse(){
 	$idQuestion = $_GET['idQuestion'];
-	$reponseToSet = isset($_POST['reponse']) ? $_POST['reponse'] : '';
-	$submitRecherche=isset($_POST['submitRecherche']) ? $_POST['submitRecherche'] : '';
-	$submitAssignation=isset($_POST['submitAssignation']) ? $_POST['submitAssignation'] : '';
+	$searchReponse = isset($_POST['searchReponse']) ? $_POST['searchReponse'] : '';
+	$selectReponse = isset($_POST['selectReponse']) ? $_POST['selectReponse'] : '';
+	$createReponse = isset($_POST['createReponse']) ? $_POST['createReponse'] : '';
+	$submitSearch = isset($_POST['submitSearch']) ? $_POST['submitSearch'] : '';
+	$submitAssociate = isset($_POST['submitAssociate']) ? $_POST['submitAssociate'] : '';
+	$submitCreate = isset($_POST['submitCreate']) ? $_POST['submitCreate'] : '';
 
-    $ListQuestions = new \ChatBot\Model\questions();
-    $list = $ListQuestions->getQuestion($idQuestion);
-    require('view/frontend/creerReponse.php');
+    $Questions = new \ChatBot\Model\questions();
+    $question = $Questions->getQuestion($idQuestion);
 
-    if ($submitAssignation)
+	$ListReponses = new \ChatBot\Model\reponses();
+    $listReponses = $ListReponses->getReponsesInWordsLike($searchReponse);
+
+    if ($submitSearch)
 	{
-		if($reponseToSet == null || trim($reponseToSet) == "") 
+		if($searchReponse == null || trim($searchReponse) == "") 
+		{
+			echo '<script type="text/javascript"> alert("Entrez une combinaisons de mots clés valide"); </script>';
+		}
+	}
+
+	if ($submitAssociate) 
+	{
+		associateReponse($selectReponse, $idQuestion);
+	}
+
+	if ($submitCreate) 
+	{
+		if($createReponse == null || trim($createReponse) == "") 
 		{
 			echo '<script type="text/javascript"> alert("La réponse saisie est invalide"); </script>';
 		}else{
-			insertReponse($reponseToSet, $idQuestion);
+			//TODO véification séparation mot clé
+			insertReponse($createReponse, $idQuestion);
 		}
 	}
+	require('view/frontend/creerReponse.php');
 }
 
 function creerMotCle(){
@@ -134,7 +157,6 @@ function creerMotCle(){
 	$searchMotCle = isset($_POST['searchMotCle']) ? $_POST['searchMotCle'] : '';
 	$selectMotCle = isset($_POST['selectMotCle']) ? $_POST['selectMotCle'] : '';
 	$createMotCle = isset($_POST['createMotCle']) ? $_POST['createMotCle'] : '';
-	//$submit = isset($_POST['submit']) ? $_POST['submit'] : '';
 	$submitSearch = isset($_POST['submitSearch']) ? $_POST['submitSearch'] : '';
 	$submitAssociate = isset($_POST['submitAssociate']) ? $_POST['submitAssociate'] : '';
 	$submitCreate = isset($_POST['submitCreate']) ? $_POST['submitCreate'] : '';
@@ -144,11 +166,8 @@ function creerMotCle(){
     
     $ListMotsCles = new \ChatBot\Model\mots_cles();
     $listMotsCles = $ListMotsCles->getMotsClesByMots($searchMotCle);
-
-    //$ListMotsCles = new \ChatBot\Model\mots_cles();
-    //$insertMotCle = $ListMotsCles->getMotsClesByMots($searchMotCle);
     
-    if ($submitSearch) //$submitSearch
+    if ($submitSearch)
 	{
 		if($searchMotCle == null || trim($searchMotCle) == "") 
 		{
@@ -165,7 +184,7 @@ function creerMotCle(){
 	{
 		if($createMotCle == null || trim($createMotCle) == "") 
 		{
-			echo '<script type="text/javascript"> alert("La réponse saisie est invalide"); </script>';
+			echo '<script type="text/javascript"> alert("La mot clé saisit est invalide"); </script>';
 		}else{
 			//TODO véification séparation mot clé
 			insertMotCle($createMotCle, $idQuestion);
@@ -201,72 +220,3 @@ function modifierCouple(){
 		}
 	}
 }
-
-/*function getUtilisateur()
-{
-	$utilisateurByMail = new \ChatBot\Model\utilisateur();
-	$utilisateur = $utilisateurByMail->getutilisateurByMail($_SESSION['mailUtilisateur']);
-	$data = $utilisateur->fetch();
-}
-
-function connectUtilisateur()
-{
-	$inscription = false;
-	$submit=isset($_POST['submit']) ? $_POST['submit'] : '';
-	require('view/frontend/connexion.php');
-	$MailUtilisateur = isset($_POST['mailUtilisateur']) ? $_POST['mailUtilisateur'] : '';
-	$MdpUtilisateur = isset($_POST['mdpUtilisateur']) ? hash('gost-crypto', $_POST['mdpUtilisateur']) : '';
-	echo $MdpUtilisateur;
-	
-	if ($submit) 
-	{
-		$utilisateur = new \ChatBot\Model\utilisateur();
-		
-		$tabUtilisateur = $utilisateur->find($MailUtilisateur)->fetch();
-		
-		if ($tabUtilisateur['mailUtilisateur']== $MailUtilisateur && $tabUtilisateur['mdpUtilisateur']== $MdpUtilisateur)
-		{
-			$_SESSION['mailUtilisateur'] = $MailUtilisateur;
-			$_SESSION['idUtilisateur'] = $tabUtilisateur['idUtilisateur'];
-			header('Location: index.php');
-		}
-		else 
-		{
-			echo '<script type="text/javascript"> alert("Utilisateur ou mot de passe non reconnu "); </script>';   
-		}
-	}
-}
-
-function inscriptionUtilisateur()
-{
-	$inscription = true;
-	$submit=isset($_POST['submit']) ? $_POST['submit'] : '';
-	require('view/frontend/connexion.php');
-	$MailUtilisateur = isset($_POST['mailUtilisateur']) ? $_POST['mailUtilisateur'] : '';
-	$MdpUtilisateur = isset($_POST['mdpUtilisateur']) ? hash('gost-crypto', $_POST['mdpUtilisateur']) : '';
-	$VerifMdp =  isset($_POST['verifMdp']) ? hash('gost-crypto', $_POST['verifMdp']) : '';
-	$AdresseUtilisateur = isset($_POST['adresseUtilisateur']) ? $_POST['adresseUtilisateur'] : '';
-	$NomUtilisateur = isset($_POST['nomUtilisateur']) ? $_POST['nomUtilisateur'] : '';
-
-    if ($submit)
-    {
-        if($MdpUtilisateur == $VerifMdp)
-        {
-			$tableau = array("mailUtilisateur" => $MailUtilisateur, "mdpUtilisateur" => $MdpUtilisateur, "nomUtilisateur" => $NomUtilisateur, "adresseUtilisateur" => $AdresseUtilisateur);
-			$utilisateur = new \ChatBot\Model\utilisateur();
-			$utilisateur->creationUtilisateur($tableau);
-			header('Location: index.php?action=connexionUtilisateur');
-        }
-        else {
-        	echo "les deux mots de passes sont différents";
-        }
-    }
-}
-
-function deconnexionUtilisateur()
-{
-	session_start();
-	session_unset();
-	session_destroy();
-	header('Location: index.php');
-}*/
