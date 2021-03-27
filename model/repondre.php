@@ -26,10 +26,22 @@ class Repondre extends Manager
         }
     }
 
+    public function deleteRepondreByQuestionAndConflicts($idQuestion, $conflicts)
+    {
+        $db = $this->dbConnect();
+        $sql = "DELETE FROM repondre WHERE id_question =:idQuestion AND mots_cles_associes =:conflicts";
+        try {
+            $sth = $db->prepare($sql);
+            $sth->execute(array(":idQuestion" => $idQuestion, ":conflicts" => $conflicts));
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la requête SQL : " . $e->getMessage());
+        }
+    }
+
     public function getCoupleQRWeak()
     {
         $db = $this->dbConnect();
-        $req = $db->query('SELECT q.question, q.id_question, rs.response, r.confiance, rs.id_reponse FROM questions q 
+        $req = $db->query('SELECT q.question, q.id_question, rs.response, r.confiance, rs.id_reponse, mots_cles_associes FROM questions q 
             INNER JOIN repondre r ON q.id_question = r.id_question 
             INNER JOIN reponses rs ON rs.id_reponse = r.id_reponse 
             WHERE r.confiance != 100');
@@ -39,7 +51,7 @@ class Repondre extends Manager
     public function getCouple($idQuestion, $idReponse)
     {
         $db = $this->dbConnect();
-        $sql = 'SELECT q.question, q.id_question, rs.response, r.confiance, rs.id_reponse FROM questions q 
+        $sql = 'SELECT q.question, q.id_question, rs.response, r.confiance, rs.id_reponse, mots_cles_associes FROM questions q 
             INNER JOIN repondre r ON q.id_question = r.id_question 
             INNER JOIN reponses rs ON rs.id_reponse = r.id_reponse 
             WHERE q.id_question = :idQuestion AND rs.id_reponse = :idReponse';
