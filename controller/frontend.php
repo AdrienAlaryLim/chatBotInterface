@@ -60,24 +60,30 @@ function getMotsClesByMots($mots)
 {
 	$MotsCles = new \ChatBot\Model\mots_cles();
     $list = $MotsCles->getMotsClesByMots($mots);
-    //require('view/frontend/listReponses.php');
 }
 
-function insertReponse($reponseToSet, $idQuestion){
+function insertReponse($reponseToSet, $idQuestion, $conflicted){
 	$reponse = new \ChatBot\Model\reponses();
 
 	$reponse->insertReponse($reponseToSet);
-	associateReponse($reponseToSet, $idQuestion);
+	$list = $reponse->getReponseByWords($reponseToSet);
+	associateReponse($reponseToSet, $idQuestion, $conflicted);
 }
 
-function associateReponse($reponseToSet, $idQuestion){
-	$reponse = new \ChatBot\Model\reponses();
+function associateReponse($reponseToSet, $idQuestion, $conflicted){
+	echo $reponseToSet, $idQuestion, $conflicted;
 	$repondre = new \ChatBot\Model\repondre();
-	$list = $reponse->getReponseByWords($reponseToSet);
-	$data = $list->fetch();
-
-	$repondre->insertRepondre($data['id_reponse'], $idQuestion);
-	header('Location: index.php?action=listQuestionsUnanswered');
+	if(null == $conflicted || '' == trim($conflicted))
+	{
+		$repondre->insertRepondre($reponseToSet, $idQuestion);
+		header('Location: index.php?action=listQuestionsUnanswered');
+	}
+	else
+	{
+		$repondre->deleteRepondreByQuestionAndConflicts($idQuestion, $conflicted);
+		$repondre->insertRepondre($reponseToSet, $idQuestion);
+		header('Location: index.php?action=listCoupleQRWeak');
+	}
 }
 
 function insertMotCle($motCleToSet, $idQuestion){
@@ -113,6 +119,7 @@ function insertReponseUpdateRepondre($reponseToSet, $idQuestion, $initialIdRepon
 
 function creerReponse(){
 	$idQuestion = $_GET['idQuestion'];
+	$conflicted = isset($_GET['conflicts']) ? $_GET['conflicts'] : '';
 	$searchReponse = isset($_POST['searchReponse']) ? $_POST['searchReponse'] : '';
 	$selectReponse = isset($_POST['selectReponse']) ? $_POST['selectReponse'] : '';
 	$createReponse = isset($_POST['createReponse']) ? $_POST['createReponse'] : '';
@@ -136,7 +143,7 @@ function creerReponse(){
 
 	if ($submitAssociate) 
 	{
-		associateReponse($selectReponse, $idQuestion);
+		associateReponse($selectReponse, $idQuestion, $conflicted);
 	}
 
 	if ($submitCreate) 
@@ -145,10 +152,13 @@ function creerReponse(){
 		{
 			echo '<script type="text/javascript"> alert("La réponse saisie est invalide"); </script>';
 		}else{
-			//TODO véification séparation mot clé
-			insertReponse($createReponse, $idQuestion);
+			//TODO vérification séparation mot clé
+			insertReponse($createReponse, $idQuestion, $conflicted);
 		}
 	}
+
+	//insertReponseUpdateRepondre($reponseToSet, $idQuestion, $idReponse);
+
 	require('view/frontend/creerReponse.php');
 }
 
@@ -192,31 +202,28 @@ function creerMotCle(){
 	}
 
 	require('view/frontend/creerMotCle.php');
-
-	
-}
-
-function modifierReponse(){
-
 }
 
 function modifierCouple(){
 	$idQuestion = $_GET['idQuestion'];
 	$idReponse = $_GET['idReponse'];
-	$reponseToSet = isset($_POST['reponse']) ? $_POST['reponse'] : '';
-	$submit=isset($_POST['submit']) ? $_POST['submit'] : '';
+	//$reponseToSet = isset($_POST['reponse']) ? $_POST['reponse'] : '';
+	$submitConfirm = isset($_POST['submitConfirm']) ? $_POST['submitConfirm'] : '';
+	$submitModify = isset($_POST['submitModify']) ? $_POST['submitModify'] : '';
+	$conflicts = isset($_POST['conflicts']) ? $_POST['conflicts'] : '';
 
     $repondre = new \ChatBot\Model\repondre();
-    $list = $repondre->getCouple($idQuestion, $idReponse);
-    require('view/frontend/modifierCouple.php');
-
-    if ($submit) 
+    $list = $repondre->getCouple($idQuestion, $idReponse);    
+    
+    if ($submitConfirm) 
 	{
-		if($reponseToSet == null || trim($reponseToSet) == "") 
-		{
-			echo '<script type="text/javascript"> alert("La réponse saisie est invalide"); </script>';
-		}else{
-			insertReponseUpdateRepondre($reponseToSet, $idQuestion, $idReponse);
-		}
+		associateReponse($idReponse, $idQuestion, $conflicts);
 	}
+
+	if ($submitModify) 
+	{
+		header('Location: index.php?action=creerReponse&idQuestion='.$idQuestion.'&conflicts='.$conflicts);
+	}
+
+	require('view/frontend/modifierCouple.php');
 }
