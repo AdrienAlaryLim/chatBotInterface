@@ -71,7 +71,7 @@ class Reponses extends Manager
                 }
                 else if(sizeof($array) != $count)
                 {
-                    $stringRequest = $stringRequest." OR mot LIKE '%".$word."%'";
+                    $stringRequest = $stringRequest." OR response LIKE '%".$word."%'";
                     $count++;
                 }
             }
