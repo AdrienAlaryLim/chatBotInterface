@@ -227,3 +227,12 @@ function modifierCouple(){
 
 	require('view/frontend/modifierCouple.php');
 }
+
+function dateFormat($stringDate)
+{
+	setlocale(LC_TIME, "fr_FR.utf8", "fra");
+	$format = "%d/%m/%Y";
+	$formated = strftime($format, strtotime($stringDate));
+
+	return $formated;
+}
