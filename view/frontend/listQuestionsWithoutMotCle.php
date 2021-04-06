@@ -31,7 +31,7 @@ ob_start();
 			?>
 				<tr>
 					<td class="tabLicence" style="width: 130px; border-left: 1px solid #ddd; text-align: center;"> <?php echo $data['id_question']; ?></td>
-					<td class="tabLicence"> <?php echo $data['date_question']; ?></td>	
+					<td class="tabLicence"> <?php echo dateFormat($data['date_question']); ?></td>	
 					<td class="tabLicence"> <?php echo $data['question']; ?></td>
 					<td class="tabLicence" style="width: 150px; padding:5px;"> 
 						<a href=<?php echo '"index.php?action=creerMotCle&idQuestion='.$data['id_question'].'"';?>> <img src="public/images/plus_36px.png" alt="Add_Response"> </a> </td>
