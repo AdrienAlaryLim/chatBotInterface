@@ -1,7 +1,6 @@
 <?php
 
 // Chargement des classes
-require_once('model/utilisateur.php');
 require_once('model/questions.php');
 require_once('model/reponses.php');
 require_once('model/repondre.php');
@@ -15,35 +14,35 @@ function getAccueil()
 
 function getListQuestions()
 {
-    $ListQuestions = new \ChatBot\Model\questions();
+    $ListQuestions = new \ChatBot\Model\Questions();
     $list = $ListQuestions->getQuestions();
     require('view/frontend/listQuestions.php');
 }
 
 function getQuestion()
 {
-    $ListQuestions = new \ChatBot\Model\questions();
+    $ListQuestions = new \ChatBot\Model\Questions();
     $list = $ListQuestions->getQuestions();
     require('view/frontend/listQuestions.php');
 }
 
 function getListQuestionsUnanswered()
 {
-    $ListQuestions = new \ChatBot\Model\questions();
+    $ListQuestions = new \ChatBot\Model\Questions();
     $list = $ListQuestions->getQuestionsUnanswered();
     require('view/frontend/listQuestionsUnanswered.php');
 }
 
 function getListQuestionsWithoutMotCle()
 {
-    $ListQuestions = new \ChatBot\Model\questions();
+    $ListQuestions = new \ChatBot\Model\Questions();
     $list = $ListQuestions->getQuestionsWithoutMotCle();
     require('view/frontend/listQuestionsWithoutMotCle.php');
 }
 
 function getListCoupleQRWeak()
 {
-    $ListQuestions = new \ChatBot\Model\repondre();
+    $ListQuestions = new \ChatBot\Model\Repondre();
 
     $list = $ListQuestions->getCoupleQRWeak();
     require('view/frontend/listCoupleWeak.php');
@@ -51,19 +50,19 @@ function getListCoupleQRWeak()
 
 function getListReponses()
 {
-	$ListReponses = new \ChatBot\Model\reponses();
+	$ListReponses = new \ChatBot\Model\Reponses();
     $list = $ListReponses->getReponses();
     require('view/frontend/listReponses.php');
 }
 
 function getMotsClesByMots($mots)
 {
-	$MotsCles = new \ChatBot\Model\mots_cles();
+	$MotsCles = new \ChatBot\Model\Mots_cles();
     $list = $MotsCles->getMotsClesByMots($mots);
 }
 
 function insertReponse($reponseToSet, $idQuestion, $conflicted){
-	$reponse = new \ChatBot\Model\reponses();
+	$reponse = new \ChatBot\Model\Reponses();
 
 	$reponse->insertReponse($reponseToSet);
 	$list = $reponse->getReponseByWords($reponseToSet);
@@ -72,7 +71,7 @@ function insertReponse($reponseToSet, $idQuestion, $conflicted){
 
 function associateReponse($reponseToSet, $idQuestion, $conflicted){
 	echo $reponseToSet, $idQuestion, $conflicted;
-	$repondre = new \ChatBot\Model\repondre();
+	$repondre = new \ChatBot\Model\Repondre();
 	if(null == $conflicted || '' == trim($conflicted))
 	{
 		$repondre->insertRepondre($reponseToSet, $idQuestion);
@@ -87,14 +86,14 @@ function associateReponse($reponseToSet, $idQuestion, $conflicted){
 }
 
 function insertMotCle($motCleToSet, $idQuestion){
-	$motCle = new \ChatBot\Model\mots_cles();
+	$motCle = new \ChatBot\Model\Mots_cles();
 
 	$motCle->insertMotCle($motCleToSet);
 	associateMotCle($motCleToSet, $idQuestion);
 }
 
 function associateMotCle($motCleToSet, $idQuestion){
-	$motCle = new \ChatBot\Model\mots_cles();
+	$motCle = new \ChatBot\Model\Mots_cles();
 	$contenir = new \ChatBot\Model\contenir();
 
 	$list = $motCle->getMotCleByMot($motCleToSet);
@@ -105,8 +104,8 @@ function associateMotCle($motCleToSet, $idQuestion){
 }
 
 function insertReponseUpdateRepondre($reponseToSet, $idQuestion, $initialIdReponse){
-	$reponse = new \ChatBot\Model\reponses();
-	$repondre = new \ChatBot\Model\repondre();
+	$reponse = new \ChatBot\Model\Reponses();
+	$repondre = new \ChatBot\Model\Repondre();
 
 	$reponse->insertReponse($reponseToSet);
 	$list = $reponse->getReponseByWords($reponseToSet);
@@ -127,10 +126,10 @@ function creerReponse(){
 	$submitAssociate = isset($_POST['submitAssociate']) ? $_POST['submitAssociate'] : '';
 	$submitCreate = isset($_POST['submitCreate']) ? $_POST['submitCreate'] : '';
 
-    $Questions = new \ChatBot\Model\questions();
+    $Questions = new \ChatBot\Model\Questions();
     $question = $Questions->getQuestion($idQuestion);
 
-	$ListReponses = new \ChatBot\Model\reponses();
+	$ListReponses = new \ChatBot\Model\Reponses();
     $listReponses = $ListReponses->getReponsesInWordsLike($searchReponse);
 
     if ($submitSearch)
@@ -171,10 +170,10 @@ function creerMotCle(){
 	$submitAssociate = isset($_POST['submitAssociate']) ? $_POST['submitAssociate'] : '';
 	$submitCreate = isset($_POST['submitCreate']) ? $_POST['submitCreate'] : '';
 
-    $Questions = new \ChatBot\Model\questions();
+    $Questions = new \ChatBot\Model\Questions();
     $question = $Questions->getQuestion($idQuestion);
     
-    $ListMotsCles = new \ChatBot\Model\mots_cles();
+    $ListMotsCles = new \ChatBot\Model\Mots_cles();
     $listMotsCles = $ListMotsCles->getMotsClesByMots($searchMotCle);
     
     if ($submitSearch)
@@ -212,7 +211,7 @@ function modifierCouple(){
 	$submitModify = isset($_POST['submitModify']) ? $_POST['submitModify'] : '';
 	$conflicts = isset($_POST['conflicts']) ? $_POST['conflicts'] : '';
 
-    $repondre = new \ChatBot\Model\repondre();
+    $repondre = new \ChatBot\Model\Repondre();
     $list = $repondre->getCouple($idQuestion, $idReponse);    
     
     if ($submitConfirm) 
