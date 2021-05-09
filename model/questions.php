@@ -3,7 +3,7 @@
 namespace ChatBot\Model;
 use \PDO;
 
-require_once("model/Manager.php");
+require_once("model/manager.php");
 
 class Questions extends Manager
 {

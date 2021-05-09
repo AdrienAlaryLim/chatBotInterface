@@ -24,7 +24,6 @@ try {
         }elseif ($_GET['action'] == 'listQuestionsWithoutMotCle') {
             getListQuestionsWithoutMotCle();
         }
-
     }
     else {
         getListQuestionsUnanswered();
