@@ -94,7 +94,7 @@ function insertMotCle($motCleToSet, $idQuestion){
 
 function associateMotCle($motCleToSet, $idQuestion){
 	$motCle = new \ChatBot\Model\Mots_cles();
-	$contenir = new \ChatBot\Model\contenir();
+	$contenir = new \ChatBot\Model\Contenir();
 
 	$list = $motCle->getMotCleByMot($motCleToSet);
 	$data = $list->fetch();
