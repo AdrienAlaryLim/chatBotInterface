@@ -66,7 +66,8 @@ function insertReponse($reponseToSet, $idQuestion, $conflicted){
 
 	$reponse->insertReponse($reponseToSet);
 	$list = $reponse->getReponseByWords($reponseToSet);
-	associateReponse($reponseToSet, $idQuestion, $conflicted);
+	$idNewReponse = $list->fetch();
+	associateReponse($idNewReponse['id_reponse'], $idQuestion, $conflicted);
 }
 
 function associateReponse($reponseToSet, $idQuestion, $conflicted){
@@ -155,8 +156,6 @@ function creerReponse(){
 			insertReponse($createReponse, $idQuestion, $conflicted);
 		}
 	}
-
-	//insertReponseUpdateRepondre($reponseToSet, $idQuestion, $idReponse);
 
 	require('view/frontend/creerReponse.php');
 }

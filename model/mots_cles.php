@@ -6,14 +6,7 @@ use \PDO;
 require_once("model/manager.php");
 
 class Mots_cles extends Manager
-{
-    public function getMotsCles()
-    {
-        $db = $this->dbConnect();
-        $req = $db->query('SELECT * FROM Questions');
-        return $req;
-    }
-    
+{    
     public function getMotCle($getId)
     {
         $db = $this->dbConnect();

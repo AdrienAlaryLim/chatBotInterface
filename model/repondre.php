@@ -7,13 +7,6 @@ require_once("model/manager.php");
 
 class Repondre extends Manager
 {
-    public function getRepondre()
-    {
-        $db = $this->dbConnect();
-        $req = $db->query('SELECT * FROM repondre');
-        return $req;
-    }
-
     public function insertRepondre($idReponse, $idQuestion)
     {
         $db = $this->dbConnect();
