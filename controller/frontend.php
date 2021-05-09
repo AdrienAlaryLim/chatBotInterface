@@ -71,7 +71,6 @@ function insertReponse($reponseToSet, $idQuestion, $conflicted){
 }
 
 function associateReponse($reponseToSet, $idQuestion, $conflicted){
-	echo $reponseToSet, $idQuestion, $conflicted;
 	$repondre = new \ChatBot\Model\Repondre();
 	if(null == $conflicted || '' == trim($conflicted))
 	{
