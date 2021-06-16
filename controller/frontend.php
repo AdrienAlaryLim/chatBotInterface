@@ -12,20 +12,6 @@ function getAccueil()
 	require('view/frontend/accueil.php');
 }
 
-function getListQuestions()
-{
-    $ListQuestions = new \ChatBot\Model\Questions();
-    $list = $ListQuestions->getQuestions();
-    require('view/frontend/listQuestions.php');
-}
-
-function getQuestion()
-{
-    $ListQuestions = new \ChatBot\Model\Questions();
-    $list = $ListQuestions->getQuestions();
-    require('view/frontend/listQuestions.php');
-}
-
 function getListQuestionsUnanswered()
 {
     $ListQuestions = new \ChatBot\Model\Questions();

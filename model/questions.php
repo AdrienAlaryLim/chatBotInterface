@@ -28,4 +28,28 @@ class Questions extends Manager
         $req = $db->query('SELECT q.id_question, q.date_question, q.question FROM questions q LEFT JOIN contenir c ON q.id_question = c.id_question WHERE c.id_question IS NULL');
         return $req;
     }
+
+    public function requestGetQuestionById($questionId)
+    {
+        $db = $this->dbConnect();
+        $sql = $db->prepare('SELECT * FROM questions WHERE id_question = :questionId');
+        $sql->execute(array('questionId' => $questionId));
+
+        
+        $array = null;
+        if (!empty($sql)) {
+            while ($data = $sql->fetch())
+            {
+                $array = array('id_question' => $data["id_question"], 'date_question' =>$data["date_question"], 'question' => $data["question"]);
+                //$stringResult = $stringResult . $data["id_question"] . ";" . $data["date_question"] . ";" . $data["question"]. "~\r";
+
+            }
+            $stringResult = json_encode($array);
+        }
+            else 
+                $stringResult = "No result";
+
+        return $stringResult;
+    }
+
 }

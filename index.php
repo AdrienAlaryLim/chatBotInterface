@@ -1,24 +1,47 @@
 <?php
 require('controller/frontend.php');
+require('controller/requests.php');
 
 try {
-     if(isset($_GET['action'])) {
-        if ($_GET['action'] == 'listQuestionsUnanswered') {
-            getListQuestionsUnanswered();
-        }elseif ($_GET['action'] == 'listCoupleQRWeak') {
-            getListCoupleQRWeak();
-        }elseif ($_GET['action'] == 'insertReponse') {
-            insertReponse();
-        }elseif ($_GET['action'] == 'creerReponse') {
-            creerReponse();
-        }elseif ($_GET['action'] == 'creerMotCle') {
-            creerMotCle();
-        }elseif ($_GET['action'] == 'modifierReponse') {
-            modifierReponse();
-        }elseif ($_GET['action'] == 'modifierCouple') {
-            modifierCouple();
-        }elseif ($_GET['action'] == 'listQuestionsWithoutMotCle') {
-            getListQuestionsWithoutMotCle();
+    if(isset($_GET['action'])) {
+        switch ($_GET['action']) {
+            case 'listQuestionsUnanswered':
+                getListQuestionsUnanswered();
+                break;
+            case 'listCoupleQRWeak':
+                getListCoupleQRWeak();
+                break;
+            case 'insertReponse':
+                insertReponse();
+                break;
+            case 'creerReponse':
+                creerReponse();
+                break;
+            case 'creerMotCle':
+                creerMotCle();
+                break;
+            case 'modifierReponse':
+                modifierReponse();
+                break;
+            case 'modifierCouple':
+                modifierCouple();
+                break;
+            case 'listQuestionsWithoutMotCle':
+                getListQuestionsWithoutMotCle();
+                break;    
+            default:
+                getListQuestionsUnanswered();
+                break;
+        }
+    }
+    elseif(isset($_GET['request'])){
+        switch ($_GET['request']) {
+            case 'getQuestionById':
+                getQuestionById();
+                break;    
+            default:
+                getListQuestionsUnanswered();
+                break;
         }
     }
     else {
