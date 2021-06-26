@@ -84,4 +84,43 @@ class Mots_cles extends Manager
             throw new Exception("Erreur lors de la requête SQL : " . $e->getMessage());
         }
     }
+
+    public function getMotsClesSoundsLike($stringWords)
+    {
+        $array = explode("/", $stringWords);
+        $count = 1;
+        $stringRequest = "";
+        foreach ($array as $word) {
+            if($count == 1)
+            {
+                
+                $stringRequest = "LIKE '%".$word."/%'";
+                $count++;
+            }
+            else if(sizeof($array) != $count)
+            {
+                $stringRequest = $stringRequest." OR mot LIKE '%".$word."/%'";
+                $count++;
+            }
+        }
+
+        $db = $this->dbConnect();
+        $req = $db->query('SELECT id_mot_cle, mot FROM mots_cles WHERE mot SOUNDS '.$stringRequest);
+
+        $req->execute();
+        $array = array();
+        if (!empty($req)) {
+            while ($data = $req->fetch())
+            {
+                $line = array('id_mot_cle' => $data["id_mot_cle"], 'mot' =>$data["mot"]);
+                array_push($array, $line);
+            }
+            $stringResult = json_encode($array);
+        }
+            else 
+                $stringResult = "No result";
+
+        return $stringResult;
+    }
+    
 }

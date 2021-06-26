@@ -38,7 +38,28 @@ try {
         switch ($_GET['request']) {
             case 'getQuestionById':
                 getQuestionById();
-                break;    
+                break;   
+            case 'getQuestionByWords':
+                getQuestionByWords();
+                break;  
+            case 'insertQuestion':
+                insertQuestion();
+                break; 
+            case 'motCleSounds':
+                motCleSounds();
+                break;
+            case 'getReponseByMotCle':
+                getReponseByMotCle();
+                break;
+            case 'getReponseByIdQuestion':
+                getReponseByIdQuestion();
+                break;
+            case 'insertReponse':
+                requestInsertReponse();
+                break;
+            case 'questionUnanswered':
+                questionUnanswered();
+                break;  
             default:
                 getListQuestionsUnanswered();
                 break;
