@@ -75,4 +75,49 @@ class Reponses extends Manager
         $req->execute();
         return $req;
     }
+
+
+    public function getReponseByMotCle($motCle)
+    {
+        $db = $this->dbConnect();
+        $sql = $db->prepare('SELECT r.id_reponse, r.response FROM reponses r INNER JOIN repondre ON  repondre.id_reponse = r.id_reponse INNER JOIN questions ON  questions.id_question = repondre.id_question INNER JOIN contenir ON  contenir.id_question = questions.id_question INNER JOIN mots_cles ON mots_cles.id_mot_cle = contenir.id_mot_cle WHERE mots_cles.mot = :motCle');
+        $sql->execute(array(':motCle'=>$motCle));
+
+        $array = null;
+        if (!empty($sql)) {
+            while ($data = $sql->fetch())
+            {
+                $array = array('id_reponse' => $data["id_reponse"], 'reponse' => $data["response"]);
+            }
+            $stringResult = json_encode($array);
+        }
+            else 
+                $stringResult = "No result";
+
+        return $stringResult;
+
+    }
+
+    public function getReponseByIdQuestion($idQuestion)
+    {
+
+        $db = $this->dbConnect();
+        $sql = $db->prepare(' SELECT r.response FROM reponses r INNER JOIN repondre ON  r.id_reponse = repondre.id_reponse INNER JOIN questions q ON q.id_question = repondre.id_question WHERE q.id_question = :idQuestion');
+        $sql->execute(array(':idQuestion'=>$idQuestion));
+
+        $array = null;
+        if (!empty($sql)) {
+            while ($data = $sql->fetch())
+            {
+                $array = array('reponse' => $data["response"]);
+            }
+            $stringResult = json_encode($array);
+        }
+            else 
+                $stringResult = "No result";
+
+        return $stringResult;
+       
+    }
+
 }

@@ -68,4 +68,18 @@ class Repondre extends Manager
             throw new Exception("Erreur lors de la requête SQL : " . $e->getMessage());
         }
     }
+
+    public function requestInsertRepondre($idQuestion, $idReponse, $confiance, $conflicts)
+    {
+        $db = $this->dbConnect();
+        $sql = "INSERT INTO repondre(id_reponse, id_question, confiance, mots_cles_associes, date_reponse) VALUES (:idReponse, :idQuestion, :confiance, :conflicts, DATE(NOW()))";
+        try {
+            $sth = $db->prepare($sql);
+            $sth->execute(array(":idQuestion" => $idQuestion, ":idReponse" => $idReponse, ":confiance" => $confiance, ":conflicts" => $conflicts));
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la requête SQL : " . $e->getMessage());
+        }
+
+        return null;
+    }
 }
